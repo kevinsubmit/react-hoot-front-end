@@ -1,7 +1,13 @@
+import styles from "./HootDetails.module.css";
+
+import AuthorInfo from "../../components/AuthorInfo/AuthorInfo";
+
+import Icon from "../Icon/Icon";
 import { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AuthedUserContext } from "../../App";
 import CommentForm from "../CommentForm/CommentForm";
+import Loading from "../Loading/Loading";
 import * as hootService from "../../services/hootService";
 
 const HootDetails = (props) => {
@@ -22,31 +28,43 @@ const HootDetails = (props) => {
     setHoot({ ...hoot, comments: [...hoot.comments, newComment] });
   };
 
-
-const handleDeleteComment = async (commentId) => {
-  // Eventually the service function will be called upon here
-  setHoot({
-    ...hoot,
-    comments: hoot.comments.filter((comment) => comment._id !== commentId),
-  });
-};
-
+  const handleDeleteComment = async (hootId, commentId) => {
+    // Eventually the service function will be called upon here
+    const delComment = await hootService.deleteComment(hootId, commentId);
+    setHoot({
+      ...hoot,
+      comments: hoot.comments.filter((comment) => comment._id !== commentId),
+    });
+  };
 
   return (
     <>
       {!hoot ? (
-        <main>Loading...</main>
+        <Loading />
       ) : (
-        <main>
-          <header>
-            <p>{hoot.category.toUpperCase()}</p>
-            <h1>{hoot.title}</h1>
-            <p>
-              {hoot.author.username} posted on{" "}
-              {new Date(hoot.createdAt).toLocaleDateString()}
-            </p>
-          </header>
-          <p>{hoot.text}</p>
+        <main className={styles.container}>
+          <section>
+            <header>
+              <p>{hoot.category.toUpperCase()}</p>
+              <h1>{hoot.title}</h1>
+              <AuthorInfo content={hoot} />
+              {hoot.author._id === user._id && (
+                <>
+                  <Link to={`/hoots/${hootId}/edit`}>
+                    <Icon category="Edit" />
+                  </Link>
+                  <button
+                    onClick={() => {
+                      props.handleDeleteHoot(hootId);
+                    }}
+                  >
+                    <Icon category="Trash" />
+                  </button>
+                </>
+              )}
+            </header>
+            <p>{hoot.text}</p>
+          </section>
           <section>
             <h2>Comments</h2>
             <CommentForm handleAddComment={handleAddComment} />
@@ -55,27 +73,30 @@ const handleDeleteComment = async (commentId) => {
             {hoot.comments.map((comment) => (
               <article key={comment._id}>
                 <header>
-                  <p>
-                    {comment.author.username} posted on
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </p>
+                  <div>
+                    <AuthorInfo content={hoot} />
+                    {comment.author._id === user._id && (
+                      <>
+                        <Link
+                          to={`/hoots/${hootId}/comments/${comment._id}/edit`}
+                        >
+                          <Icon category="Edit" />
+                        </Link>
+                        <button
+                          onClick={() =>
+                            handleDeleteComment(hootId, comment._id)
+                          }
+                        >
+                          <Icon category="Trash" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </header>
                 <p>{comment.text}</p>
               </article>
             ))}
           </section>
-          {hoot.author._id === user._id && (
-            <>
-              <Link to={`/hoots/${hootId}/edit`}>Edit</Link>
-              <button
-                onClick={() => {
-                  props.handleDeleteHoot(hootId);
-                }}
-              >
-                Delete
-              </button>
-            </>
-          )}
         </main>
       )}
     </>

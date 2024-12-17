@@ -7,6 +7,8 @@ import HootList from "./components/HootList/HootList";
 import Dashboard from "./components/Dashboard/Dashboard";
 import SignupForm from "./components/SignupForm/SignupForm";
 import SigninForm from "./components/SigninForm/SigninForm";
+import CommentForm from "./components/CommentForm/CommentForm";
+
 import HootDetails from "./components/HootDetails/HootDetails";
 import * as authService from "../src/services/authService"; // import the authservice
 import * as hootService from "../src/services/hootService";
@@ -35,13 +37,16 @@ const App = () => {
   };
 
   const handleUpdateHoot = async (hootId, hootFormData) => {
-    const updatedHoot = await hootService.update(hootId, hootFormData)
-    setHoots(hoots.map((hoot) => (hoot._id === updatedHoot._id ? updatedHoot : hoot)))
+    const updatedHoot = await hootService.update(hootId, hootFormData);
+    setHoots(
+      hoots.map((hoot) => (hoot._id === updatedHoot._id ? updatedHoot : hoot))
+    );
     navigate(`/hoots/${hootId}`);
   };
 
   const handleDeleteHoot = async (hootId) => {
     const deletedHoot = await hootService.deleteHoot(hootId);
+    console.log(deletedHoot);
     setHoots(hoots.filter((hoot) => hoot._id !== deletedHoot._id));
     navigate("/hoots");
   };
@@ -59,7 +64,7 @@ const App = () => {
           {user ? (
             // Protected
             <>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Landing />} />
               <Route path="/hoots" element={<HootList hoots={hoots} />} />
               <Route
                 path="/hoots/:hootId"
@@ -72,6 +77,11 @@ const App = () => {
               <Route
                 path="/hoots/:hootId/edit"
                 element={<HootForm handleUpdateHoot={handleUpdateHoot} />}
+              />
+              // src/App.jsx
+              <Route
+                path="/hoots/:hootId/comments/:commentId/edit"
+                element={<CommentForm />}
               />
             </>
           ) : (

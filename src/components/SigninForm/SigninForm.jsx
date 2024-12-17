@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import LoginIcon from '../../assets/images/login.svg';
+
+import styles from './SigninForm.module.css';
+
+
 import * as authService from '../../services/authService';
 
 const SigninForm = (props) => {
@@ -32,10 +37,15 @@ const SigninForm = (props) => {
   };
 
   return (
-    <main>
+    <main className={styles.container}>
+    <section>
+      <img src={LoginIcon} alt="An owl sitting on a sign" />
+    </section>
+
+     <section>
+      <form autoComplete="off" onSubmit={handleSubmit}>
       <h1>Log In</h1>
       <p>{message}</p>
-      <form autoComplete="off" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Username:</label>
           <input
@@ -65,6 +75,7 @@ const SigninForm = (props) => {
           </Link>
         </div>
       </form>
+      </section>
     </main>
   );
 };

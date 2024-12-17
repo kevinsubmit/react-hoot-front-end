@@ -60,10 +60,10 @@ const createComment = async (hootId, commentFormData) => {
 const update = async (hootId, hootFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${hootId}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(hootFormData),
     });
@@ -71,7 +71,7 @@ const update = async (hootId, hootFormData) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const deleteHoot = async (hootId) => {
   try {
@@ -87,4 +87,41 @@ const deleteHoot = async (hootId) => {
   }
 };
 
-export { index, show, create, update, createComment, deleteHoot };
+const deleteComment = async (hootId, commentId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${hootId}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    return res.json();
+  } catch (error) {}
+};
+
+const updateComment = async (hootId, commentId, commentFormData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${hootId}/comments/${commentId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commentFormData),
+    });
+    return res.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export {
+  index,
+  show,
+  create,
+  update,
+  createComment,
+  deleteHoot,
+  deleteComment,
+  updateComment
+};

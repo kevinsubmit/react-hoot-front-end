@@ -1,3 +1,6 @@
+
+import styles from './NavBar.module.css';
+import Logo from '../../assets/images/logo.svg';
 import { Link } from "react-router-dom";
 import { AuthedUserContext } from "../../App";
 import { useContext } from "react";
@@ -8,7 +11,8 @@ const NavBar = ({ handleSignout }) => {
   return (
     <>
       {user ? (
-        <nav>
+        <nav className={styles.container}>
+          <Link to='/'><img src={Logo} alt="A cute owl" /></Link>
           <ul>
             <li>
               <Link to="/">HOME</Link>
